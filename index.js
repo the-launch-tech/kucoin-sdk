@@ -34,6 +34,13 @@ class Kucoin {
         return this.tryCatch(response, endpoint)
       },
     }
+
+    this.getSymbolsList = this.getSymbolsList.bind(this)
+    this.getKlines = this.getKlines.bind(this)
+    this.getTradeHistories = this.getTradeHistories.bind(this)
+    this.getFullOrderBookAggregated = this.getFullOrderBookAggregated.bind(this)
+    this.getTicker = this.getTicker.bind(this)
+    this.getFullOrderBookAtomic = this.getFullOrderBookAtomic.bind(this)
   }
 
   /*
@@ -238,6 +245,15 @@ class Kucoin {
    */
   async getFiatPrice(params = {}) {
     return await this.request('GET', '/prices', params)
+  }
+
+  /*
+   * GET /api/v1/accounts
+   * currency String [optional]
+   * type (main, trade or margin) [optional]
+   */
+  async listAccounts(params = {}) {
+    return await this.request('GET', '/accounts', params)
   }
 }
 
