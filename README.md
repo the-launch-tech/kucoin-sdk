@@ -15,7 +15,7 @@ Endpoints match the API documentation semantically.
 
 ## Usage
 
-- `const KucoinInstance = new Kucoin({SECRET, KEY})`
+- `const KucoinInstance = new Kucoin({ SECRET, KEY })`
 - `KucoinInstance.initialize()`
 
 - `KucoinInstance.getCurrencies().then(data => console.log(data))`
@@ -24,6 +24,7 @@ Endpoints match the API documentation semantically.
 ## History
 
 - Initial Commit
+- Added untested routes for Deposits, Withdrawals, Margin Trading, Account Info, Orders, and Fills
 
 ## Credits
 
