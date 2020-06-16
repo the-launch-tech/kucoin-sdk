@@ -2,11 +2,11 @@
 
 **_ Current version 2.0.0 is unpublished on NPM. When 2.0.0 is complete with unit tests this Github repository will be re-published as 2.0.0 on NPM _**
 
+## 1.0.0 (Current NPM Version)
+
 Endpoints match the API documentation semantically.
 
-Version 2.0.0 will be Typescript integrated, unit tested, and will contain copied documentation from Kucoin for inline comments in IDE.
-
-## Installation
+### Installation
 
 `npm i --save kucoin-sdk`
 
@@ -15,7 +15,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - `const Kucoin = require('kucoin-sdk')`
 - Or ES6 imports: `import Kucoin from 'kucoin-sdk'`
 
-## Usage
+### Usage
 
 - `const KucoinInstance = new Kucoin({ SECRET, KEY })`
 - `KucoinInstance.initialize()`
@@ -23,7 +23,11 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - `KucoinInstance.getCurrencies().then(console.log).catch(console.error)`
 - `KucoinInstance.getTicker({symbol: 'BTC-USDT'}).then(console.log).catch(console.error)`
 
-- Example Methods
+## 2.0.0 Updates (Not Published To NPM)
+
+Version 2.0.0 will be Typescript integrated, unit tested, and will contain copied documentation from Kucoin for inline comments in IDE.
+
+### Example Methods
 
 ```
 /**
