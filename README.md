@@ -25,7 +25,7 @@ Endpoints match the API documentation semantically.
 
 ## 2.0.0 Updates (Not Published To NPM)
 
-Version 2.0.0 will be Typescript integrated, unit tested, and will contain copied documentation from Kucoin for inline comments in IDE.
+Version 2.0.0 will be Typescript integrated, unit tested, and will contain copied docstrings and documentation references for IDE hinting.
 
 ### Example Methods
 
@@ -83,9 +83,11 @@ async getTicker(
 
 ## History
 
-- Initial Commit
-- Added untested routes for Deposits, Withdrawals, Margin Trading, Account Info, Orders, and Fills
-- Building 2.0.0, not published to NPM yet.
+- `1.0.0` Initial Commit
+- `1.1.0` Added untested routes for Deposits, Withdrawals, Margin Trading, Account Info, Orders, and Fills
+- `2.0.0` Removed Axios in favor of Fetch API
+- `2.0.0` Integrate Typescript
+- `2.0.0` Integrate Docstrings for IDE comment hinting
 
 ## Credits
 
