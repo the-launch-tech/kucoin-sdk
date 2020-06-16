@@ -1,5 +1,7 @@
 # Kucoin SDK
 
+**_ Current version 2.0.0 is unpublished on NPM. When 2.0.0 is complete with unit tests this Github repository will be re-published as 2.0.0 on NPM _**
+
 This is a growing SDK for the Kucoin cryptocurrency exchange. Currently handles 14 endpoints. More coming very soon.
 
 Endpoints match the API documentation semantically.
