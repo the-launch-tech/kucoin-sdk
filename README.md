@@ -81,6 +81,7 @@ async getTicker(
 
 - Initial Commit
 - Added untested routes for Deposits, Withdrawals, Margin Trading, Account Info, Orders, and Fills
+- Building 2.0.0, not published to NPM yet.
 
 ## Credits
 
