@@ -85,7 +85,6 @@ async getTicker(
 
 - `1.0.0` Initial Commit
 - `1.1.0` Added untested routes for Deposits, Withdrawals, Margin Trading, Account Info, Orders, and Fills
-- `2.0.0` Removed Axios in favor of Fetch API
 - `2.0.0` Integrate Typescript
 - `2.0.0` Integrate Docstrings for IDE comment hinting
 
