@@ -1,38 +1,62 @@
+import { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+
 import { KucoinSDK } from './types'
 
-import { merge, getQueryString, uri } from './utils'
+import * as Utils from './utils'
 
 export default async function(
-  key: string,
+  axios: AxiosInstance,
   method: 'GET' | 'PUT' | 'POST' | 'DELETE',
   endpoint: string,
   params: KucoinSDK.Http.Params<any>,
   config: KucoinSDK.Http.Config
 ): Promise<KucoinSDK.Http.Data<any>> {
-  const sandbox = 'https://openapi-sandbox.kucoin.com'
-  const fullUri: string = uri(endpoint + getQueryString(params))
-  const fullConfig: KucoinSDK.Http.Config = {
-    ...merge(
-      {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-MBX-APIKEY': key,
-        },
-      },
-      config
-    ),
+  const axiosReducer: KucoinSDK.Http.Reducer = {
+    GET: async function(
+      endpoint: string,
+      params: KucoinSDK.Http.Params<any>,
+      config: AxiosRequestConfig
+    ): Promise<any> {
+      try {
+        return await axios.get(endpoint, { ...config, params })
+      } catch (e) {}
+    },
+    PUT: async function(
+      endpoint: string,
+      params: KucoinSDK.Http.Params<any>,
+      config: AxiosRequestConfig
+    ): Promise<any> {
+      try {
+        return await axios.put(endpoint, params, config)
+      } catch (e) {}
+    },
+    POST: async function(
+      endpoint: string,
+      params: KucoinSDK.Http.Params<any>,
+      config: AxiosRequestConfig
+    ): Promise<any> {
+      try {
+        return await axios.post(endpoint, params, config)
+      } catch (e) {}
+    },
+    DELETE: async function(
+      endpoint: string,
+      params: KucoinSDK.Http.Params<any>,
+      config: AxiosRequestConfig
+    ): Promise<any> {
+      try {
+        return await axios.delete(endpoint, { ...config, params })
+      } catch (e) {}
+    },
   }
 
-  const response: KucoinSDK.Http.Response<Response> = await fetch(fullUri, fullConfig)
+  const axiosAction: KucoinSDK.Http.Action = axiosReducer[method]
 
-  try {
-    response.parsedBody = await response.json()
-  } catch (e) {}
-
-  if (!response.ok) {
-    throw response.statusText
+  if (!axiosAction) {
+    throw `Invalid method: ${method}.`
   }
 
-  return response.parsedBody
+  const res: AxiosResponse<any> = await axiosAction(endpoint, params, config)
+
+  return res.data
 }

@@ -1,3 +1,5 @@
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios'
+
 import { KucoinSDK } from './types'
 
 import * as Utils from './utils'
@@ -10,44 +12,92 @@ const DELETE: string = 'DELETE'
 
 class Kucoin {
   private SECRET: string
+  private axios: AxiosInstance
   public KEY: string
   public prefix: string
 
-  constructor({ SECRET, KEY }: { SECRET: string; KEY: string }) {
+  constructor({ SECRET, KEY, isTest }: KucoinSDK.Params) {
     this.SECRET = SECRET
     this.KEY = KEY
     this.prefix = '/v1'
-    Utils.bindings.map(binding => (this[binding] = this[binding].bind(this)))
+    this.axios = axios.create({
+      baseURL: isTest ? 'https://openapi-sandbox.kucoin.com' : 'https://openapi-v2.kucoin.com/api',
+      headers: {
+        'Content-Type': 'application/json',
+        'KC-API-PASSPHRASE': this.SECRET,
+        'KC-API-KEY': this.KEY,
+      },
+    })
+
+    Utils.bindings.map((binding: string): void => (this[binding] = this[binding].bind(this)))
   }
 
-  async makeRequest(
-    args: { type?: 'private'; method: 'GET' | 'POST' | 'PUT' | 'DELETE'; endpoint: string },
+  /**
+   * @docs https://github.com/axios/axios
+   * @description You can intercept requests or responses before they are handled by then or catch.
+   */
+  addRequestInterceptor(
+    onBeforeCallback: (
+      value: AxiosRequestConfig
+    ) => AxiosRequestConfig | Promise<AxiosRequestConfig>,
+    onErrorCallback: (error: AxiosError) => AxiosError | Promise<AxiosError>
+  ): any {
+    return this.axios.interceptors.request.use(onBeforeCallback, onErrorCallback)
+  }
+
+  /**
+   * @docs https://github.com/axios/axios
+   * @description If you need to remove an interceptor later you can.
+   */
+  removeRequestInterceptor(interceptor: any): void {
+    this.axios.interceptors.request.eject(interceptor)
+  }
+
+  /**
+   * @docs https://github.com/axios/axios
+   * @description You can intercept requests or responses before they are handled by then or catch.
+   */
+  addResponseInterceptor(
+    onSuccessCallback: (response: AxiosResponse) => AxiosResponse | Promise<AxiosResponse>,
+    onErrorCallback: (error: AxiosError) => AxiosError | Promise<AxiosError>
+  ): any {
+    return this.axios.interceptors.response.use(onSuccessCallback, onErrorCallback)
+  }
+
+  /**
+   * @docs https://github.com/axios/axios
+   * @description If you need to remove an interceptor later you can.
+   */
+  removeResponseInterceptor(interceptor: any): void {
+    this.axios.interceptors.request.eject(interceptor)
+  }
+
+  private async makeRequest(
+    { type, method, endpoint }: KucoinSDK.Request.Args,
     params: KucoinSDK.Http.Params<any>,
-    map?: KucoinSDK.Map
+    map?: KucoinSDK.Request.Map
   ) {
-    const { type, method, endpoint } = args
     const paramError: KucoinSDK.Http.ParamError = Utils.checkParameters(params, map || [])
 
     if (!!paramError) {
       throw paramError
     }
 
-    const path: string = Utils.getPath(this.prefix, endpoint)
-
     try {
-      if (type !== 'private') {
-        return await Http(this.KEY, method, path, params, {})
-      } else {
+      let config: KucoinSDK.Http.Config = {}
+      const path: string = Utils.getPath(this.prefix, endpoint)
+      if (type === 'private') {
         const timestamp: number = Utils.getTimestamp()
         const queryString: string = Utils.getQueryString(params)
-        const signature: string = Utils.getSignature(this.SECRET, path, queryString, timestamp)
-        return await Http(this.KEY, method, path, params, {
+        config = {
           headers: {
-            'KC-API-NONCE': timestamp,
-            'KC-API-SIGNATURE': signature,
+            'KC-API-TIMESTAMP': timestamp,
+            'KC-API-SIGN': Utils.getSignature(this.SECRET, path, queryString, timestamp),
           },
-        })
+        }
       }
+
+      return await Http(this.axios, method, path, params, config)
     } catch (e) {}
   }
 

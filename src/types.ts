@@ -1,10 +1,33 @@
+import { AxiosInstance, AxiosRequestConfig } from 'axios'
+
 export namespace KucoinSDK {
-  export type MapItem = {
-    key: string
-    required?: boolean
+  export type Params = {
+    SECRET: string
+    KEY: string
+    isTest: boolean
   }
 
-  export type Map = MapItem[]
+  export type Instance = {
+    SECRET: string
+    KEY: string
+    prefix: string
+    axios: AxiosInstance
+  }
+
+  export namespace Request {
+    export type Args = {
+      type?: 'private'
+      method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+      endpoint: string
+    }
+
+    export type MapItem = {
+      key: string
+      required?: boolean
+    }
+
+    export type Map = MapItem[]
+  }
 
   export namespace Http {
     export type Params<KV> = KV
@@ -20,11 +43,15 @@ export namespace KucoinSDK {
     }
 
     export type ParamError = boolean | string
-  }
 
-  export type Kucoin = {
-    SECRET: string
-    KEY: string
-    prefix: string
+    export type Action = (
+      endpoint: string,
+      params: KucoinSDK.Http.Params<any>,
+      config: AxiosRequestConfig
+    ) => Promise<any>
+
+    export type Reducer = {
+      [key: string]: Action
+    }
   }
 }

@@ -4,6 +4,9 @@
   "description": "Kucoin Exchange NodeJS SDK",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "scripts": {
+    "tsc": "tsc"
+  },
   "engines": {
     "node": ">=8"
   },
@@ -12,10 +15,14 @@
     "SDK",
     "NodeJS",
     "Crypto",
-    "Trading"
+    "Trading",
+    "Market",
+    "API",
+    "Javascript",
+    "Node"
   ],
   "author": "Daniel Griffiths",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/the-launch-tech/kucoin-sdk"
@@ -23,5 +30,8 @@
   "devDependencies": {
     "@types/node": "^14.0.13",
     "typescript": "^3.9.5"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
   }
 }

@@ -2,24 +2,6 @@ import crypto from 'crypto'
 
 import { KucoinSDK } from './types'
 
-export function merge(
-  obj1: KucoinSDK.Http.Config,
-  obj2: KucoinSDK.Http.Config
-): KucoinSDK.Http.Config {
-  for (let p in obj2) {
-    try {
-      if (obj2[p].constructor == Object) {
-        obj1[p] = merge(obj1[p], obj2[p])
-      } else {
-        obj1[p] = obj2[p]
-      }
-    } catch (e) {
-      obj1[p] = obj2[p]
-    }
-  }
-  return obj1
-}
-
 export function getQueryString(params: KucoinSDK.Http.Params<any>): string {
   const keys: string[] = Object.keys(params)
   return !!keys.length
@@ -27,24 +9,20 @@ export function getQueryString(params: KucoinSDK.Http.Params<any>): string {
     : ''
 }
 
-export function uri(endpoint: string): string {
-  return `https://openapi-v2.kucoin.com/api${endpoint}`
-}
-
 export function checkParameters(
   params: KucoinSDK.Http.Params<any>,
-  map: KucoinSDK.Map
+  map: KucoinSDK.Request.Map
 ): string | boolean {
   const unused: string[] = Object.keys(params).filter((param: string): boolean => {
     return (
-      map.findIndex((item: KucoinSDK.MapItem): boolean => {
+      map.findIndex((item: KucoinSDK.Request.MapItem): boolean => {
         return item.key === param
       }) === -1
     )
   })
 
   const missing: (string | undefined)[] = map
-    .map((item: KucoinSDK.MapItem) => {
+    .map((item: KucoinSDK.Request.MapItem) => {
       return !params[item.key] && item.required ? item.key : undefined
     })
     .filter(Boolean)
@@ -83,7 +61,7 @@ export function getTimestamp(): number {
   return new Date().getTime()
 }
 
-export function req(param: { key: string }): KucoinSDK.MapItem {
+export function req(param: { key: string }): KucoinSDK.Request.MapItem {
   return { ...param, required: true }
 }
 

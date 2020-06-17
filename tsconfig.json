@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES5",
     "strictNullChecks": true,
-    "noEmit": true,
-    "lib": ["es6", "dom"],
+    "noEmit": false,
+    "lib": ["ESNext"],
     "module": "commonjs",
     "allowSyntheticDefaultImports": true,
-    "declaration": true
+    "declaration": true,
+    "declarationDir": "./dist",
+    "outDir": "./dist"
   },
-  "include": ["./src"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
