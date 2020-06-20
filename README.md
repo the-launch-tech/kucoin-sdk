@@ -1,4 +1,4 @@
-# Kucoin SDK
+# Kucoin SDK 2.0.0
 
 Version 1.x.x Endpoints match the API documentation semantically.
 
@@ -6,12 +6,12 @@ Version 2.x.x is Typescript integrated, partially unit tested, and contains copi
 
 Version 3.x.x will contain a WebSocket implementation.
 
-## 1.x.x - 2.x.x User Changes
+## 2.x.x User Facing Changes
 
 1. `PASSPHRASE?: string` can be added as a parameter to the class instantiation. It is you API creation passphrase, and is required for signing authenticated requests for private endpoints.
 2. `isTest?: boolean` can be addedas a parameter to the class instantiation to indicate sandbox usage.
 
-## 2.x.x Installation
+## Installation
 
 `npm i --save kucoin-sdk`
 
@@ -22,7 +22,20 @@ Version 3.x.x will contain a WebSocket implementation.
 
 ## Usage
 
-- Instantiate: `const KucoinInstance = new Kucoin({ SECRET, KEY, PASSPHRASE, isTest: false })`
+```
+const Kucoin = require('kucoin-sdk')
+
+const KucoinInstance = new Kucoin({
+  KEY: 'xxxxxxxxxxxxxxxxxxxxxx',
+  SECRET: 'xxxxxxxx-xxx-xxxx-xxxx-xxxxxxxx',
+  isTest?: false,
+  PASSPHRASE?: 'xxxxxxxxxx',
+})
+
+KucoinInstance.getKlines({ symbol: 'BTC-USDT', type: '1min' })
+  .then(console.log)
+  .catch(console.error)
+```
 
 ## Auxillary Helper Methods
 
