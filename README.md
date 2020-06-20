@@ -11,6 +11,11 @@ Version 3.x.x will contain a WebSocket implementation.
 1. `PASSPHRASE?: string` can be added as a parameter to the class instantiation. It is you API creation passphrase, and is required for signing authenticated requests for private endpoints.
 2. `isTest?: boolean` can be addedas a parameter to the class instantiation to indicate sandbox usage.
 
+## Additional Features
+
+- Axios `interceptor` callbacks on KucoinInstance
+- Param checker with `console.warning` or `throw e` for _missing_ or _unused_ paramters at runtime
+
 ## Installation
 
 `npm i --save kucoin-sdk`
@@ -32,9 +37,25 @@ const KucoinInstance = new Kucoin({
   PASSPHRASE?: 'xxxxxxxxxx',
 })
 
+const requestInterceptor = KucoinInstance.addRequestInterceptor(
+  value => value,
+  error => error
+)
+
+const responseInterceptor = KucoinInstance.addResponseInterceptor(
+  value => value,
+  error => error
+)
+
+...
+
 KucoinInstance.getKlines({ symbol: 'BTC-USDT', type: '1min' })
   .then(console.log)
   .catch(console.error)
+
+...
+
+KucoinInstance.removeRequestInterceptor(requestInterceptor)
 ```
 
 ## Auxillary Helper Methods
