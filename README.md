@@ -38,12 +38,12 @@ const KucoinInstance = new Kucoin({
 })
 
 const requestInterceptor = KucoinInstance.addRequestInterceptor(
-  value => value,
+  config => config,
   error => error
 )
 
 const responseInterceptor = KucoinInstance.addResponseInterceptor(
-  value => value,
+  response => response,
   error => error
 )
 
