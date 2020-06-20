@@ -28,7 +28,7 @@ const Kucoin = require('kucoin-sdk')
 const KucoinInstance = new Kucoin({
   KEY: 'xxxxxxxxxxxxxxxxxxxxxx',
   SECRET: 'xxxxxxxx-xxx-xxxx-xxxx-xxxxxxxx',
-  isTest?: false,
+  isTest?: true,
   PASSPHRASE?: 'xxxxxxxxxx',
 })
 
