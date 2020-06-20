@@ -280,7 +280,7 @@ class Kucoin {
    */
   async getCurrencyDetail(
     currency: string,
-    params: KucoinSDK.Http.Params<{ chain?: string }> = {}
+    params: KucoinSDK.Http.Params<{ chain?: string[] }> = {}
   ): Promise<
     KucoinSDK.Http.Data<{
       currency: string
@@ -311,7 +311,7 @@ class Kucoin {
    * @description Request via this endpoint to get the fiat price of the currencies for the available trading pairs.
    */
   async getFiatPrice(
-    params: KucoinSDK.Http.Params<{ base: string; currencies: string }>
+    params: KucoinSDK.Http.Params<{ base?: string; currencies?: string[] }>
   ): Promise<
     KucoinSDK.Http.Data<{
       code: number
@@ -322,8 +322,8 @@ class Kucoin {
   > {
     try {
       return await this.makeRequest({ method: 'GET', endpoint: '/prices' }, params, [
-        { key: 'base', required: true },
-        { key: 'currencies', required: true },
+        { key: 'base' },
+        { key: 'currencies' },
       ])
     } catch (e) {
       throw e
@@ -335,7 +335,7 @@ class Kucoin {
    * @description Request via this endpoint to get a list of open orders for a symbol. Level-2 order book includes all bids and asks (aggregated by price), this level returns only one size for each active price (as if there was only a single order for that price). Query via this endpoint and the system will return only part of the order book to you. If you request level2_20, the system will return you 20 pieces of data (ask and bid data) on the order book. If you request level_100, the system will return 100 pieces of data (ask and bid data) on the order book to you. You are recommended to request via this endpoint as the system reponse would be faster and cosume less traffic. To maintain up-to-date Order Book, please use Websocket incremental feed after retrieving the Level 2 snapshot.
    */
   async getPartOrderBook(
-    level: number,
+    level: 20 | 100,
     params: KucoinSDK.Http.Params<{ symbol: string }>
   ): Promise<
     KucoinSDK.Http.Data<{

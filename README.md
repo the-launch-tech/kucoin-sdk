@@ -17,7 +17,7 @@ Endpoints match the API documentation semantically.
 
 ### Usage
 
-- `const KucoinInstance = new Kucoin({ SECRET, KEY })`
+- `const KucoinInstance = new Kucoin({ SECRET, KEY, PASSPHRASE, isTest: false })`
 - `KucoinInstance.initialize()`
 
 - `KucoinInstance.getCurrencies().then(console.log).catch(console.error)`
@@ -34,6 +34,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Docs
 
   - Callback to access Axios interceptor.
+  - `const interceptor = KucoinInstance.addRequestInterceptor(onBeforeCallback, onErrorCallback)`
 
 - Types
 
@@ -49,6 +50,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Docs
 
   - Callback to access Axios interceptor.
+  - `KucoinInstance.removeRequestInterceptor(interceptor)`
 
 - Types
 
@@ -61,6 +63,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Docs
 
   - Callback to access Axios interceptor.
+  - `const interceptor = KucoinInstance.addResponseInterceptor(onSuccessCallback, onErrorCallback)`
 
 - Types
 
@@ -76,6 +79,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Docs
 
   - Callback to access Axios interceptor.
+  - `KucoinInstance.removeResponseInterceptor(interceptor)`
 
 - Types
 
@@ -91,6 +95,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-symbols-list
   - Request via this endpoint to get a list of available currency pairs for trading. If you want to get the market information of the trading symbol, please use Get All Tickers.
+  - `KucoinInstance.getSymbolsList().then(console.log).catch(console.error)`
 
 - Types
 
@@ -124,6 +129,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-ticker
   - Request via this endpoint to get Level 1 Market Data. The returned value includes the best bid price and size, the best ask price and size as well as the last traded price and the last traded size.
+  - `KucoinInstance.getTicker({ symbol: 'BTC-USDT' }).then(console.log).catch(console.error)`
 
 - Types
 
@@ -148,6 +154,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-all-tickers
   - Request market tickers for all the trading pairs in the market (including 24h volume). On the rare occasion that we will change the currency name, if you still want the changed symbol name, you can use the symbolName field instead of the symbol field via “Get all tickers” endpoint.
+  - `KucoinInstance.getAllTickers().then(console.log).catch(console.error)`
 
 - Types
 
@@ -178,6 +185,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-24hr-stats
   - Request via this endpoint to get the statistics of the specified ticker in the last 24 hours.
+  - `KucoinInstance.get24HourStats({ symbol: 'BTC-USDT' }).then(console.log).catch(console.error)`
 
 - Types
 
@@ -206,6 +214,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-market-list
   - Request via this endpoint to get the transaction currency for the entire trading market.
+  - `KucoinInstance.getMarketList().then(console.log).catch(console.error)`
 
 - Types
 
@@ -223,6 +232,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-currencies
   - Request via this endpoint to get the currency list.
+  - `KucoinInstance.getCurrencies().then(console.log).catch(console.error)`
 
 - Types
 
@@ -251,11 +261,12 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-currency-detail
   - Request via this endpoint to get the currency details of a specified currency.
+  - `KucoinInstance.getCurrencyDetail('BTC').then(console.log).catch(console.error)`
 
 - Types
 
 ```
-(currency: string, params: KucoinSDK.Http.Params<{ chain?: string }>) => Promise<
+(currency: string, params: KucoinSDK.Http.Params<{ chain?: string[] }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
     name: string
@@ -277,11 +288,12 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-fiat-price
   - Request via this endpoint to get the fiat price of the currencies for the available trading pairs.
+  - `KucoinInstance.getFiatPrice({ base: 'USD', currencies: ['BTC', 'ETH'] }).then(console.log).catch(console.error)`
 
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ base: string; currencies: string }>) => Promise<
+(params: KucoinSDK.Http.Params<{ base?: string; currencies?: string[] }>) => Promise<
   KucoinSDK.Http.Data<{
     code: number
     data: {
@@ -297,11 +309,12 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-part-order-book-aggregated
   - Request via this endpoint to get a list of open orders for a symbol. Level-2 order book includes all bids and asks (aggregated by price), this level returns only one size for each active price (as if there was only a single order for that price). Query via this endpoint and the system will return only part of the order book to you. If you request level2_20, the system will return you 20 pieces of data (ask and bid data) on the order book. If you request level_100, the system will return 100 pieces of data (ask and bid data) on the order book to you. You are recommended to request via this endpoint as the system reponse would be faster and cosume less traffic. To maintain up-to-date Order Book, please use Websocket incremental feed after retrieving the Level 2 snapshot.
+  - `KucoinInstance.getPartOrderBook(level: 20, { symbol: 'USDT-BTC' }).then(console.log).catch(console.error)`
 
 - Types
 
 ```
-(level: number, params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
+(level: 20 | 100, params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     sequence: number
     time: number
@@ -317,6 +330,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-full-order-book-aggregated
   - Request via this endpoint to get the order book of the specified symbol. Level 2 order book includes all bids and asks (aggregated by price). This level returns only one aggregated size for each price (as if there was only one single order for that price). This API will return data with full depth. It is generally used by professional traders because it uses more server resources and traffic, and we have strict access frequency control. To maintain up-to-date Order Book, please use Websocket incremental feed after retrieving the Level 2 snapshot.
+  - `KucoinInstance.getFullOrderBookAggregated({ symbol: 'USDT-BTC' }).then(console.log).catch(console.error)`
 
 - Types
 
@@ -337,6 +351,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-full-order-book-atomic
   - Request via this endpoint to get the Level 3 order book of the specified trading pari. Level 3 order book includes all bids and asks (the data is non-aggregated, and each item means a single order). This API is generally used by professional traders because it uses more server resources and traffic, and we have strict access frequency control. To maintain up-to-date order book, please use Websocket incremental feed after retrieving the Level 3 snapshot. In the orderbook, the selling data is sorted low to high by price and orders with the same price are sorted in time sequence. The buying data is sorted high to low by price and orders with the same price are sorted in time sequence. The matching engine will match the orders according to the price and time sequence.
+  - `KucoinInstance.getFullOrderBookAtomic({ symbol: 'USDT-BTC' }).then(console.log).catch(console.error)`
 
 - Types
 
@@ -357,6 +372,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-trade-histories
   - Request via this endpoint to get the trade history of the specified symbol.
+  - `KucoinInstance.getTradeHistories({ symbol: 'USDT-BTC' }).then(console.log).catch(console.error)`
 
 - Types
 
