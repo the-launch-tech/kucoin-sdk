@@ -27,7 +27,7 @@ Version 3.x.x will contain a WebSocket implementation.
 
 ## Usage
 
-```
+```javascript
 const Kucoin = require('kucoin-sdk')
 
 const KucoinInstance = new Kucoin({
@@ -69,7 +69,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   onBeforeCallback (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>,
   onErrorCallback: (error: AxiosError) => AxiosError | Promise<AxiosError>
@@ -87,7 +87,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (interceptor: any) => void
 ```
 
@@ -102,8 +102,8 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
-(
+```typescript
+;(
   onSuccessCallback: (response: AxiosResponse) => AxiosResponse | Promise<AxiosResponse>,
   onErrorCallback: (error: AxiosError) => AxiosError | Promise<AxiosError>
 ) => any
@@ -120,7 +120,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (interceptor: any) => void
 ```
 
@@ -138,7 +138,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ market?: string }>) => Promise<
   KucoinSDK.Http.Data<
     {
@@ -174,7 +174,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     sequence: number
@@ -201,7 +201,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     time: number
@@ -234,7 +234,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     symbol: string
@@ -265,7 +265,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     data: string[]
@@ -285,7 +285,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<
     {
@@ -316,7 +316,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (currency: string, params: KucoinSDK.Http.Params<{ chain?: string[] }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
@@ -345,7 +345,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ base?: string; currencies?: string[] }>) => Promise<
   KucoinSDK.Http.Data<{
     code: number
@@ -368,7 +368,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (level: 20 | 100, params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     sequence: number
@@ -391,7 +391,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     sequence: number
@@ -414,7 +414,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     sequence: number
@@ -437,7 +437,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<
     {
@@ -463,7 +463,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     symbol: string
@@ -501,7 +501,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<
     {
@@ -525,7 +525,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency: string; type: 'main' | 'trade' | 'margin' }>) => Promise<
   KucoinSDK.Http.Data<{
     id: string
@@ -545,7 +545,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency?: string; type?: 'main' | 'trade' | 'margin' | 'pool' }>) => Promise<
   KucoinSDK.Http.Data<
     {
@@ -572,7 +572,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ accountId: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
@@ -595,7 +595,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{
   accountId: string
   startAt?: string
@@ -644,7 +644,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ accountId: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currentPage: number
@@ -674,7 +674,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ subUserId: string }>) => Promise<
   KucoinSDK.Http.Data<{
     subUserId: string
@@ -721,7 +721,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<
     {
@@ -770,7 +770,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' | 'POOL' }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
@@ -793,7 +793,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     clientOid: string
@@ -822,7 +822,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     clientOid: string
@@ -849,7 +849,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency: string; chain?: string }>) => Promise<
   KucoinSDK.Http.Data<{
     address: string
@@ -870,7 +870,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency: string; chain?: string }>) => Promise<
   KucoinSDK.Http.Data<{
     address: string
@@ -891,7 +891,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency?: string
@@ -933,7 +933,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency?: string
@@ -970,7 +970,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency?: string
@@ -1013,7 +1013,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency?: string
@@ -1053,7 +1053,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency: string; chain?: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
@@ -1083,7 +1083,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency: string
@@ -1112,7 +1112,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ withdrawalId: string }>) => Promise<KucoinSDK.Http.Data<{}>>
 ```
 
@@ -1127,7 +1127,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     clientOId: string
@@ -1167,7 +1167,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ orderId: string }>): Promise<
   KucoinSDK.Http.Data<{
     cancelledOrderIds: string[]
@@ -1186,7 +1186,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol?: string; tradeType?: 'TRADE' | 'MARGIN_TRADE' | string }>) => Promise<
   KucoinSDK.Http.Data<{
     cancelledOrderIds: string[]
@@ -1205,7 +1205,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     status?: 'active' | 'done'
@@ -1269,7 +1269,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currentPage?: number
@@ -1309,7 +1309,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     currentPage: number
@@ -1363,7 +1363,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{ orderId: string }>
 ) => Promise<
@@ -1413,7 +1413,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     orderId?: string
@@ -1464,7 +1464,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     code: number
@@ -1502,7 +1502,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     symbol: string
@@ -1524,7 +1524,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     currencyList: string[]
@@ -1546,7 +1546,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     accounts: {
@@ -1573,7 +1573,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency: string
@@ -1601,7 +1601,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ orderId: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
@@ -1632,7 +1632,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency?: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currentPage: number
@@ -1666,7 +1666,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency?: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currentPage: number
@@ -1698,7 +1698,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{
     currency: string
@@ -1719,7 +1719,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (
   params: KucoinSDK.Http.Params<{ currency: string; tradeId: string; size: number }>
 ) => Promise<KucoinSDK.Http.Data<{}>>
@@ -1736,7 +1736,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 (params: KucoinSDK.Http.Params<{ currency: string }>) => Promise<
   KucoinSDK.Http.Data<
     {
@@ -1762,7 +1762,7 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 
 - Types
 
-```
+```typescript
 () => Promise<
   KucoinSDK.Http.Data<{
     code: number
