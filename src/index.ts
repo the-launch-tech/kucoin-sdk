@@ -13,14 +13,14 @@ const DELETE: string = 'DELETE'
 class Kucoin {
   private SECRET: string
   private KEY: string
-  private PASSPHRASE: string
+  private PASSPHRASE?: string
   private axios: AxiosInstance
   public prefix: string
 
   constructor({ SECRET, KEY, PASSPHRASE, isTest }: KucoinSDK.Params) {
     this.SECRET = SECRET
     this.KEY = KEY
-    this.PASSPHRASE = PASSPHRASE
+    this.PASSPHRASE = PASSPHRASE || ''
     this.prefix = '/api/v1'
     this.axios = axios.create({
       baseURL: isTest ? 'https://openapi-sandbox.kucoin.com' : 'https://openapi-v2.kucoin.com',
@@ -516,7 +516,10 @@ class Kucoin {
    * @description Get a list of accounts. Please deposit funds to the main account firstly, then transfer the funds to the trade account via Inner Transfer before transaction
    */
   async listAccounts(
-    params: KucoinSDK.Http.Params<{ currency?: string; type?: 'main' | 'trade' | 'margin' }> = {}
+    params: KucoinSDK.Http.Params<{
+      currency?: string
+      type?: 'main' | 'trade' | 'margin' | 'pool'
+    }> = {}
   ): Promise<
     KucoinSDK.Http.Data<
       {

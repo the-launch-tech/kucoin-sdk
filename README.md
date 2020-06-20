@@ -1,33 +1,30 @@
 # Kucoin SDK
 
-**_ Current version 2.0.0 is unpublished on NPM. When 2.0.0 is complete with unit tests this Github repository will be re-published as 2.0.0 on NPM _**
+Version 1.x.x Endpoints match the API documentation semantically.
 
-## 1.0.0 (Current NPM Version)
+Version 2.x.x is Typescript integrated, partially unit tested, and contains copied docstrings and documentation references for IDE hinting.
 
-Endpoints match the API documentation semantically.
+Version 3.x.x will contain a WebSocket implementation.
 
-### Installation
+## 1.x.x - 2.x.x User Changes
+
+1. `PASSPHRASE?: string` can be added as a paramter to the class instantiation. It is you API creation passphrase, and is required for signing authenticated requests for private endpoints.
+2. `isTest?: boolean` can be added to indicate sandbox usage.
+
+## 2.x.x Installation
 
 `npm i --save kucoin-sdk`
 
-### Import Package(s)
+## Import Package(s)
 
 - `const Kucoin = require('kucoin-sdk')`
 - Or ES6 imports: `import Kucoin from 'kucoin-sdk'`
 
-### Usage
+## Usage
 
-- `const KucoinInstance = new Kucoin({ SECRET, KEY, PASSPHRASE, isTest: false })`
-- `KucoinInstance.initialize()`
+- Instantiate: `const KucoinInstance = new Kucoin({ SECRET, KEY, PASSPHRASE, isTest: false })`
 
-- `KucoinInstance.getCurrencies().then(console.log).catch(console.error)`
-- `KucoinInstance.getTicker({symbol: 'BTC-USDT'}).then(console.log).catch(console.error)`
-
-## 2.0.0 Updates (Not Published To NPM)
-
-Version 2.0.0 will be Typescript integrated, unit tested, and will contain copied docstrings and documentation references for IDE hinting.
-
-### Helper Methods
+## Auxillary Helper Methods
 
 #### `addRequestInterceptor`
 
@@ -45,6 +42,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ) => any
 ```
 
+---
+
 #### `removeRequestInterceptor`
 
 - Docs
@@ -57,6 +56,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ```
 (interceptor: any) => void
 ```
+
+---
 
 #### `addResponseInterceptor`
 
@@ -74,6 +75,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ) => any
 ```
 
+---
+
 #### `removeResponseInterceptor`
 
 - Docs
@@ -86,6 +89,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ```
 (interceptor: any) => void
 ```
+
+---
 
 ### (Public) API Endpoint Methods
 
@@ -123,6 +128,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getTicker`
 
 - Docs
@@ -147,6 +154,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getAllTickers`
 
@@ -179,6 +188,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async get24HourStats`
 
 - Docs
@@ -208,6 +219,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getMarketList`
 
 - Docs
@@ -225,6 +238,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getCurrencies`
 
@@ -255,6 +270,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getCurrencyDetail`
 
 - Docs
@@ -282,6 +299,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getFiatPrice`
 
 - Docs
@@ -302,6 +321,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getPartOrderBook`
 
@@ -324,6 +345,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getFullOrderBookAggregated`
 
 - Docs
@@ -345,6 +368,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getFullOrderBookAtomic`
 
 - Docs
@@ -365,6 +390,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getTradeHistories`
 
@@ -390,12 +417,15 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getKlines`
 
 - Docs
 
   - https://docs.kucoin.com/#get-klines
   - Request via this endpoint to get the kline of the specified symbol. Data are returned in grouped buckets based on requested type.
+  - `KucoinInstance.getKlines({ symbol: 'USDT-BTC', type: '1min' }).then...`
 
 - Types
 
@@ -423,7 +453,9 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ): Promise<KucoinSDK.Http.Data<number[][]>>
 ```
 
-### (Private) API Endpoint Methods
+---
+
+## (Private) API Endpoint Methods
 
 #### `async getUserSubInfo`
 
@@ -431,6 +463,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
   - https://docs.kucoin.com/#get-user-info-of-all-sub-accounts
   - You can get the user info of all sub-users via this interface.
+  - `KucoinInstance.getUserSubInfo().then...`
 
 - Types
 
@@ -446,34 +479,40 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async createAnAccount`
 
 - Docs
 
   - https://docs.kucoin.com/#create-an-account
   - Create account.
+  - `KucoinInstance.createAnAccount({ currency: 'BTC', type: 'main' }).then...`
 
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' }>) => Promise<
+(params: KucoinSDK.Http.Params<{ currency: string; type: 'main' | 'trade' | 'margin' }>) => Promise<
   KucoinSDK.Http.Data<{
     id: string
   }>
 >
 ```
 
+---
+
 #### `async listAccounts`
 
 - Docs
 
   - https://docs.kucoin.com/#list-accounts
-  - Get a list of accounts. Please deposit funds to the main account firstly, then transfer the funds to the trade account via Inner Transfer before transaction
+  - Get a list of accounts. Please deposit funds to the main account firstly, then transfer the funds to the trade account via Inner Transfer before transaction.
+  - `KucoinInstance.listAccounts().then...`
 
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ currency?: string; type?: 'MAIN' | 'TRADE' | 'MARGIN' }>) => Promise<
+(params: KucoinSDK.Http.Params<{ currency?: string; type?: 'main' | 'trade' | 'margin' | 'pool' }>) => Promise<
   KucoinSDK.Http.Data<
     {
       id: string
@@ -487,12 +526,15 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getAnAccount`
 
 - Docs
 
   - https://docs.kucoin.com/#get-an-account
   - Information for a single account. Use this endpoint when you know the accountId.
+  - `KucoinInstance.getAnAccount({ accountId: 'xxxxxx' }).then...`
 
 - Types
 
@@ -507,12 +549,15 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getAccountLedgers`
 
 - Docs
 
   - https://docs.kucoin.com/#get-account-ledgers
   - Request via this endpoint to get the account ledgers. Items are paginated and sorted to show the latest first. See the Pagination section for retrieving additional entries after the first page.
+  - `KucoinInstance.getAccountLedgers({ accountId: 'xxxxxx' }).then...`
 
 - Types
 
@@ -554,6 +599,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getHolds`
 
 - Docs
@@ -581,6 +628,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getSubAccountBalance`
 
@@ -626,6 +675,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getAggregatedSubAccountBalance`
 
@@ -674,6 +725,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getTheTransferable`
 
 - Docs
@@ -694,6 +747,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async transferBetweenMasterAndSubUser`
 
@@ -722,6 +777,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async innerTransfer`
 
 - Docs
@@ -747,6 +804,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async createDepositAddress`
 
 - Docs
@@ -766,6 +825,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getDepositAddress`
 
 - Docs
@@ -784,6 +845,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getDepositList`
 
@@ -825,6 +888,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getHistoricalDepositsList`
 
 - Docs
@@ -859,6 +924,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getWithdrawalsList`
 
@@ -901,6 +968,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getHistoricalWithdrawalsList`
 
 - Docs
@@ -939,6 +1008,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getWithdrawalQuotas`
 
 - Docs
@@ -967,6 +1038,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async applyWithdrawal`
 
 - Docs
@@ -994,6 +1067,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async cancelWithdrawal`
 
 - Docs
@@ -1006,6 +1081,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ```
 (params: KucoinSDK.Http.Params<{ withdrawalId: string }>) => Promise<KucoinSDK.Http.Data<{}>>
 ```
+
+---
 
 #### `async placeANewOrder`
 
@@ -1045,6 +1122,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async cancelAnOrder`
 
 - Docs
@@ -1062,6 +1141,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async cancelAllOrders`
 
 - Docs
@@ -1078,6 +1159,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async listOrders`
 
@@ -1141,6 +1224,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getHistoricalOrdersList`
 
 - Docs
@@ -1178,6 +1263,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async recentOrders`
 
@@ -1231,6 +1318,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getAnOrder`
 
 - Docs
@@ -1278,6 +1367,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async listFills`
 
@@ -1328,6 +1419,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async recentFills`
 
 - Docs
@@ -1364,6 +1457,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getMarkPrice`
 
 - Docs
@@ -1384,6 +1479,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getMarginConfigurationInfo`
 
 - Docs
@@ -1403,6 +1500,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getMarginAccount`
 
@@ -1429,6 +1528,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async postBorrowOrder`
 
 - Docs
@@ -1454,6 +1555,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getBorrowOrder`
 
@@ -1483,6 +1586,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 #### `async getRepayRecord`
 
@@ -1516,6 +1621,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async getRepaymentRecord`
 
 - Docs
@@ -1546,6 +1653,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async oneClickRepayment`
 
 - Docs
@@ -1565,6 +1674,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ) => Promise<KucoinSDK.Http.Data<{}>>
 ```
 
+---
+
 #### `async repayASingleOrder`
 
 - Docs
@@ -1579,6 +1690,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   params: KucoinSDK.Http.Params<{ currency: string; tradeId: string; size: number }>
 ) => Promise<KucoinSDK.Http.Data<{}>>
 ```
+
+---
 
 #### `async marginTradeData`
 
@@ -1604,6 +1717,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 >
 ```
 
+---
+
 #### `async serverTime`
 
 - Docs
@@ -1622,6 +1737,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   }>
 >
 ```
+
+---
 
 ## History
 
