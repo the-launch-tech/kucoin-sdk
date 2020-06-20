@@ -1,3 +1,13 @@
 package-lock.json
 /node_modules
 /dist
+index.js
+index.d.ts
+utils.js
+utils.d.ts
+constants.js
+constants.d.ts
+types.js
+types.d.ts
+LICENCE.md
+CONCERNS.md

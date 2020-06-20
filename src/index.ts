@@ -165,21 +165,19 @@ class Kucoin {
   ): Promise<
     KucoinSDK.Http.Data<{
       time: number
-      ticker: [
-        {
-          symbol: string
-          symbolName: string
-          buy: number
-          sell: number
-          changeRate: number
-          changePrice: number
-          high: number
-          low: number
-          vol: number
-          volValue: number
-          last: number
-        }[]
-      ]
+      ticker: {
+        symbol: string
+        symbolName: string
+        buy: number
+        sell: number
+        changeRate: number
+        changePrice: number
+        high: number
+        low: number
+        vol: number
+        volValue: number
+        last: number
+      }[]
     }>
   > {
     return await this.makeRequest({ method: 'GET', endpoint: '/market/allTickers' }, {})
