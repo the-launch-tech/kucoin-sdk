@@ -9,5 +9,8 @@ constants.js
 constants.d.ts
 types.js
 types.d.ts
+Http.js
+Http.d.ts
 LICENCE.md
 CONCERNS.md
+test.js

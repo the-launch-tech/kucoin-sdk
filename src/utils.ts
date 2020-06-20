@@ -13,17 +13,21 @@ export function checkParameters(
   params: KucoinSDK.Http.Params<any>,
   map: KucoinSDK.Request.Map
 ): string | boolean {
-  const unused: string[] = Object.keys(params).filter((param: string): boolean => {
-    return (
-      map.findIndex((item: KucoinSDK.Request.MapItem): boolean => {
-        return item.key === param
-      }) === -1
-    )
-  })
+  const unused: string[] = params
+    ? (Object.keys(params) || []).filter((param: string): boolean => {
+        return (
+          map.findIndex((item: KucoinSDK.Request.MapItem): boolean => {
+            return item.key === param
+          }) === -1
+        )
+      })
+    : []
 
-  const missing: (string | undefined)[] = map
+  const missing: (string | undefined)[] = (map || [])
     .map((item: KucoinSDK.Request.MapItem) => {
-      return !params[item.key] && item.required ? item.key : undefined
+      return (!params && item.required) || (params && !params[item.key] && item.required)
+        ? item.key
+        : undefined
     })
     .filter(Boolean)
 
@@ -42,14 +46,14 @@ export function getSignature(
   secret: string,
   path: string,
   queryString: string,
-  timestamp: number
+  timestamp: string,
+  method: string
 ): string {
-  const strForSign: string = `${path}/${timestamp}/${queryString}`
-  const signatureStr: string = new Buffer(strForSign).toString('base64')
+  const strForSign: string = `${timestamp}${method}${path}${queryString}`
   const signatureResult: string = crypto
-    .createHmac('sha256', this.SECRET)
-    .update(signatureStr)
-    .digest('hex')
+    .createHmac('sha256', secret)
+    .update(strForSign)
+    .digest('base64')
   return signatureResult
 }
 
@@ -57,8 +61,8 @@ export function getPath(prefix: string, endpoint: string): string {
   return prefix + endpoint
 }
 
-export function getTimestamp(): number {
-  return new Date().getTime()
+export function getTimestamp(): string {
+  return Date.now() + ''
 }
 
 export function req(param: { key: string }): KucoinSDK.Request.MapItem {
@@ -66,6 +70,10 @@ export function req(param: { key: string }): KucoinSDK.Request.MapItem {
 }
 
 export const bindings: string[] = [
+  'addRequestInterceptor',
+  'removeRequestInterceptor',
+  'addResponseInterceptor',
+  'removeResponseInterceptor',
   'request',
   'signedRequest',
   'getCurrencies',

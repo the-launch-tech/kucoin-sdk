@@ -4,6 +4,7 @@ export namespace KucoinSDK {
   export type Params = {
     SECRET: string
     KEY: string
+    PASSPHRASE: string
     isTest: boolean
   }
 

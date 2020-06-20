@@ -19,7 +19,9 @@ export default async function(
     ): Promise<any> {
       try {
         return await axios.get(endpoint, { ...config, params })
-      } catch (e) {}
+      } catch (e) {
+        throw e
+      }
     },
     PUT: async function(
       endpoint: string,
@@ -28,7 +30,9 @@ export default async function(
     ): Promise<any> {
       try {
         return await axios.put(endpoint, params, config)
-      } catch (e) {}
+      } catch (e) {
+        throw e
+      }
     },
     POST: async function(
       endpoint: string,
@@ -37,7 +41,9 @@ export default async function(
     ): Promise<any> {
       try {
         return await axios.post(endpoint, params, config)
-      } catch (e) {}
+      } catch (e) {
+        throw e
+      }
     },
     DELETE: async function(
       endpoint: string,
@@ -46,7 +52,9 @@ export default async function(
     ): Promise<any> {
       try {
         return await axios.delete(endpoint, { ...config, params })
-      } catch (e) {}
+      } catch (e) {
+        throw e
+      }
     },
   }
 
@@ -57,6 +65,10 @@ export default async function(
   }
 
   const res: AxiosResponse<any> = await axiosAction(endpoint, params, config)
+
+  if (!res) {
+    throw 'Invalid Response'
+  }
 
   return res.data
 }

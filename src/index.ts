@@ -12,24 +12,24 @@ const DELETE: string = 'DELETE'
 
 class Kucoin {
   private SECRET: string
+  private KEY: string
+  private PASSPHRASE: string
   private axios: AxiosInstance
-  public KEY: string
   public prefix: string
 
-  constructor({ SECRET, KEY, isTest }: KucoinSDK.Params) {
+  constructor({ SECRET, KEY, PASSPHRASE, isTest }: KucoinSDK.Params) {
     this.SECRET = SECRET
     this.KEY = KEY
-    this.prefix = '/v1'
+    this.PASSPHRASE = PASSPHRASE
+    this.prefix = '/api/v1'
     this.axios = axios.create({
-      baseURL: isTest ? 'https://openapi-sandbox.kucoin.com' : 'https://openapi-v2.kucoin.com/api',
+      baseURL: isTest ? 'https://openapi-sandbox.kucoin.com' : 'https://openapi-v2.kucoin.com',
       headers: {
         'Content-Type': 'application/json',
-        'KC-API-PASSPHRASE': this.SECRET,
+        'KC-API-PASSPHRASE': this.PASSPHRASE,
         'KC-API-KEY': this.KEY,
       },
     })
-
-    Utils.bindings.map((binding: string): void => (this[binding] = this[binding].bind(this)))
   }
 
   /**
@@ -87,18 +87,23 @@ class Kucoin {
       let config: KucoinSDK.Http.Config = {}
       const path: string = Utils.getPath(this.prefix, endpoint)
       if (type === 'private') {
-        const timestamp: number = Utils.getTimestamp()
-        const queryString: string = Utils.getQueryString(params)
+        const timestamp: string = Utils.getTimestamp()
+        const queryString: string =
+          method === 'GET' || method === 'DELETE'
+            ? Utils.getQueryString(params)
+            : JSON.stringify(params)
         config = {
           headers: {
             'KC-API-TIMESTAMP': timestamp,
-            'KC-API-SIGN': Utils.getSignature(this.SECRET, path, queryString, timestamp),
+            'KC-API-SIGN': Utils.getSignature(this.SECRET, path, queryString, timestamp, method),
           },
         }
       }
 
       return await Http(this.axios, method, path, params, config)
-    } catch (e) {}
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -128,9 +133,13 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/symbols' }, params, [
-      { key: 'market' },
-    ])
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/symbols' }, params, [
+        { key: 'market' },
+      ])
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -151,18 +160,22 @@ class Kucoin {
       time: number
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/orderbook/level1' }, params, [
-      { key: 'symbol', required: true },
-    ])
+    try {
+      return await this.makeRequest(
+        { method: 'GET', endpoint: '/market/orderbook/level1' },
+        params,
+        [{ key: 'symbol', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-all-tickers
    * @description Request market tickers for all the trading pairs in the market (including 24h volume). On the rare occasion that we will change the currency name, if you still want the changed symbol name, you can use the symbolName field instead of the symbol field via “Get all tickers” endpoint.
    */
-  async getAllTickers(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async getAllTickers(): Promise<
     KucoinSDK.Http.Data<{
       time: number
       ticker: {
@@ -180,7 +193,11 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/allTickers' }, {})
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/market/allTickers' }, {})
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -205,32 +222,36 @@ class Kucoin {
       changeRate: number
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/stats' }, params, [
-      { key: 'symbol', required: true },
-    ])
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/market/stats' }, params, [
+        { key: 'symbol', required: true },
+      ])
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-market-list
    * @description Request via this endpoint to get the transaction currency for the entire trading market.
    */
-  async getMarketList(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async getMarketList(): Promise<
     KucoinSDK.Http.Data<{
       data: string[]
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/markets' }, {})
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/markets' }, {})
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-currencies
    * @description Request via this endpoint to get the currency list.
    */
-  async getCurrencies(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async getCurrencies(): Promise<
     KucoinSDK.Http.Data<
       {
         currency: string
@@ -246,7 +267,11 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/currencies' }, {})
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/currencies' }, {})
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -270,9 +295,15 @@ class Kucoin {
       isDebitEnabled: boolean
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: `/currencies/${currency}` }, params, [
-      { key: 'chain' },
-    ])
+    try {
+      return await this.makeRequest(
+        { method: 'GET', endpoint: `/currencies/${currency}` },
+        params,
+        [{ key: 'chain' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -289,10 +320,14 @@ class Kucoin {
       }
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/prices' }, params, [
-      { key: 'base', required: true },
-      { key: 'currencies', required: true },
-    ])
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/prices' }, params, [
+        { key: 'base', required: true },
+        { key: 'currencies', required: true },
+      ])
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -301,7 +336,7 @@ class Kucoin {
    */
   async getPartOrderBook(
     level: number,
-    params: KucoinSDK.Http.Params<{ level: string; symbol: string }>
+    params: KucoinSDK.Http.Params<{ symbol: string }>
   ): Promise<
     KucoinSDK.Http.Data<{
       sequence: number
@@ -310,11 +345,15 @@ class Kucoin {
       asks: number[][]
     }>
   > {
-    return await this.makeRequest(
-      { method: 'GET', endpoint: `/market/orderbook/level2_${level}` },
-      params,
-      [{ key: 'level', required: true }, { key: 'symbol', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { method: 'GET', endpoint: `/market/orderbook/level2_${level}` },
+        params,
+        [{ key: 'symbol', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -331,9 +370,15 @@ class Kucoin {
       asks: number[][]
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/orderbook/level2' }, params, [
-      { key: 'symbol', required: true },
-    ])
+    try {
+      return await this.makeRequest(
+        { method: 'GET', endpoint: '/market/orderbook/level2' },
+        params,
+        [{ key: 'symbol', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -350,9 +395,15 @@ class Kucoin {
       asks: number[][]
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/orderbook/level3' }, params, [
-      { key: 'symbol', required: true },
-    ])
+    try {
+      return await this.makeRequest(
+        { method: 'GET', endpoint: '/market/orderbook/level3' },
+        params,
+        [{ key: 'symbol', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -372,9 +423,13 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/histories' }, params, [
-      { key: 'symbol', required: true },
-    ])
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/market/histories' }, params, [
+        { key: 'symbol', required: true },
+      ])
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -386,7 +441,7 @@ class Kucoin {
       symbol: string
       startAt?: string
       endAt?: string
-      type?:
+      type:
         | '1min'
         | '3min'
         | '5min'
@@ -402,21 +457,23 @@ class Kucoin {
         | '1week'
     }>
   ): Promise<KucoinSDK.Http.Data<number[][]>> {
-    return await this.makeRequest({ method: 'GET', endpoint: '/market/candles' }, params, [
-      { key: 'symbol', required: true },
-      { key: 'startAt' },
-      { key: 'endAt' },
-      { key: 'type' },
-    ])
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/market/candles' }, params, [
+        { key: 'symbol', required: true },
+        { key: 'startAt' },
+        { key: 'endAt' },
+        { key: 'type', required: true },
+      ])
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-user-info-of-all-sub-accounts
    * @description You can get the user info of all sub-users via this interface.
    */
-  async getUserSubInfo(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async getUserSubInfo(): Promise<
     KucoinSDK.Http.Data<
       {
         userId: string
@@ -425,7 +482,11 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/sub/user' }, {})
+    try {
+      return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/sub/user' }, {})
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -433,17 +494,21 @@ class Kucoin {
    * @description Create account.
    */
   async createAnAccount(
-    params: KucoinSDK.Http.Params<{ currency?: string; type?: 'MAIN' | 'TRADE' | 'MARGIN' }>
+    params: KucoinSDK.Http.Params<{ currency: string; type: 'main' | 'trade' | 'margin' }>
   ): Promise<
     KucoinSDK.Http.Data<{
       id: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/accounts' },
-      params,
-      [{ key: 'currency' }, { key: 'type' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/accounts' },
+        params,
+        [{ key: 'currency', required: true }, { key: 'type', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -451,7 +516,7 @@ class Kucoin {
    * @description Get a list of accounts. Please deposit funds to the main account firstly, then transfer the funds to the trade account via Inner Transfer before transaction
    */
   async listAccounts(
-    params: KucoinSDK.Http.Params<{ currency?: string; type?: 'MAIN' | 'TRADE' | 'MARGIN' }>
+    params: KucoinSDK.Http.Params<{ currency?: string; type?: 'main' | 'trade' | 'margin' }> = {}
   ): Promise<
     KucoinSDK.Http.Data<
       {
@@ -464,11 +529,15 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/accounts' },
-      params,
-      [{ key: 'currency' }, { key: 'type' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/accounts' },
+        params,
+        [{ key: 'currency' }, { key: 'type' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -485,11 +554,15 @@ class Kucoin {
       holds: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: `/accounts/${params.accountId}` },
-      params,
-      [{ key: 'accountId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: `/accounts/${params.accountId}` },
+        params,
+        [{ key: 'accountId', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -497,7 +570,20 @@ class Kucoin {
    * @description Request via this endpoint to get the account ledgers. Items are paginated and sorted to show the latest first. See the Pagination section for retrieving additional entries after the first page.
    */
   async getAccountLedgers(
-    params: KucoinSDK.Http.Params<{ accountId: string; startAt?: string; endAt?: string }>
+    params: KucoinSDK.Http.Params<{
+      accountId: string
+      startAt?: string
+      endAt?: string
+      direction?: 'in' | 'out'
+      bizType?:
+        | 'DEPOSIT'
+        | 'WITHDRAW'
+        | 'TRANSFER'
+        | 'SUB_TRANSFER'
+        | 'TRADE_EXCHANGE'
+        | 'MARGIN_EXCHANGE'
+        | 'KUCOIN_BONUS'
+    }>
   ): Promise<
     KucoinSDK.Http.Data<{
       currentPage: number
@@ -520,11 +606,21 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: `/accounts/${params.accountId}/ledgers` },
-      params,
-      [{ key: 'accountId', required: true }, { key: 'startAt' }, { key: 'endAt' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: `/accounts/${params.accountId}/ledgers` },
+        params,
+        [
+          { key: 'accountId', required: true },
+          { key: 'startAt' },
+          { key: 'endAt' },
+          { key: 'direction' },
+          { key: 'bizType' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -549,11 +645,15 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: `/accounts/${params.accountId}/holds` },
-      params,
-      [{ key: 'accountId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: `/accounts/${params.accountId}/holds` },
+        params,
+        [{ key: 'accountId', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -595,20 +695,22 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: `/sub-accounts/${params.subUserId}` },
-      params,
-      [{ key: 'subUserId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: `/sub-accounts/${params.subUserId}` },
+        params,
+        [{ key: 'subUserId', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-the-aggregated-balance-of-all-sub-accounts
    * @description This endpoint returns the account info of all sub-users.
    */
-  async getAggregatedSubAccountBalance(
-    params: KucoinSDK.Http.Params<{}>
-  ): Promise<
+  async getAggregatedSubAccountBalance(): Promise<
     KucoinSDK.Http.Data<
       {
         subUserId: string
@@ -643,7 +745,14 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/sub-accounts' }, {})
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/sub-accounts' },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -651,7 +760,7 @@ class Kucoin {
    * @description This endpoint returns the transferable balance of a specified account.
    */
   async getTheTransferable(
-    params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' }>
+    params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' | 'POOL' }>
   ): Promise<
     KucoinSDK.Http.Data<{
       currency: string
@@ -661,11 +770,15 @@ class Kucoin {
       transferable: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/accounts/transferable' },
-      params,
-      [{ key: 'currency', required: true }, { key: 'type', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/accounts/transferable' },
+        params,
+        [{ key: 'currency', required: true }, { key: 'type', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -678,7 +791,7 @@ class Kucoin {
       currency: string
       amount: string | number
       direction: 'OUT' | 'IN'
-      accountType?: 'MAIN' | 'TRADE' | 'MARGIN'
+      accountType?: 'MAIN'
       subAccountType?: 'MAIN' | 'TRADE' | 'MARGIN'
       subUserId: string
     }>
@@ -687,19 +800,23 @@ class Kucoin {
       orderId: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/accounts/sub-transfer' },
-      params,
-      [
-        { key: 'clientOid', required: true },
-        { key: 'currency', required: true },
-        { key: 'amount', required: true },
-        { key: 'direction', required: true },
-        { key: 'accountType' },
-        { key: 'subAccountType' },
-        { key: 'subUserId', required: true },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/accounts/sub-transfer' },
+        params,
+        [
+          { key: 'clientOid', required: true },
+          { key: 'currency', required: true },
+          { key: 'amount', required: true },
+          { key: 'direction', required: true },
+          { key: 'accountType' },
+          { key: 'subAccountType' },
+          { key: 'subUserId', required: true },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -710,8 +827,8 @@ class Kucoin {
     params: KucoinSDK.Http.Params<{
       clientOid: string
       currency: string
-      from: 'MAIN' | 'TRADE' | 'MARGIN'
-      to: 'MAIN' | 'TRADE' | 'MARGIN'
+      from: 'main' | 'trade' | 'margin' | 'pool'
+      to: 'main' | 'trade' | 'margin' | 'pool'
       amount: string | number
     }>
   ): Promise<
@@ -719,17 +836,21 @@ class Kucoin {
       orderId: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/accounts/inner-transfer' },
-      params,
-      [
-        { key: 'clientOid', required: true },
-        { key: 'currency', required: true },
-        { key: 'amount', required: true },
-        { key: 'from', required: true },
-        { key: 'to', required: true },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/accounts/inner-transfer' },
+        params,
+        [
+          { key: 'clientOid', required: true },
+          { key: 'currency', required: true },
+          { key: 'amount', required: true },
+          { key: 'from', required: true },
+          { key: 'to', required: true },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -745,11 +866,15 @@ class Kucoin {
       chain: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/deposit-addresses' },
-      params,
-      [{ key: 'currency', required: true }, { key: 'chain' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/deposit-addresses' },
+        params,
+        [{ key: 'currency', required: true }, { key: 'chain' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -765,11 +890,15 @@ class Kucoin {
       chain: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/deposit-addresses' },
-      params,
-      [{ key: 'currency', required: true }, { key: 'chain' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/deposit-addresses' },
+        params,
+        [{ key: 'currency', required: true }, { key: 'chain' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -804,11 +933,15 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/deposits' },
-      params,
-      [{ key: 'currency' }, { key: 'startAt' }, { key: 'endAt' }, { key: 'status' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/deposits' },
+        params,
+        [{ key: 'currency' }, { key: 'startAt' }, { key: 'endAt' }, { key: 'status' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -838,11 +971,15 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/hist-deposits' },
-      params,
-      [{ key: 'currency' }, { key: 'startAt' }, { key: 'endAt' }, { key: 'status' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/hist-deposits' },
+        params,
+        [{ key: 'currency' }, { key: 'startAt' }, { key: 'endAt' }, { key: 'status' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -878,11 +1015,15 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/withdrawals' },
-      params,
-      [{ key: 'currency' }, { key: 'startAt' }, { key: 'endAt' }, { key: 'status' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/withdrawals' },
+        params,
+        [{ key: 'currency' }, { key: 'startAt' }, { key: 'endAt' }, { key: 'status' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -894,7 +1035,7 @@ class Kucoin {
       currency?: string
       startAt?: string
       endAt?: string
-      status?: string
+      status?: 'PROCESSING' | 'SUCCESS' | 'FAILURE'
       currentPage?: number
       pageSize?: number
     }>
@@ -915,18 +1056,22 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/hist-withdrawals' },
-      params,
-      [
-        { key: 'currency' },
-        { key: 'startAt' },
-        { key: 'endAt' },
-        { key: 'status' },
-        { key: 'currentPage' },
-        { key: 'pageSize' },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/hist-withdrawals' },
+        params,
+        [
+          { key: 'currency' },
+          { key: 'startAt' },
+          { key: 'endAt' },
+          { key: 'status' },
+          { key: 'currentPage' },
+          { key: 'pageSize' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -934,7 +1079,7 @@ class Kucoin {
    * @description Get withdrawal quotas
    */
   async getWithdrawalQuotas(
-    params: KucoinSDK.Http.Params<{ currency?: string; chain?: string }>
+    params: KucoinSDK.Http.Params<{ currency: string; chain?: string }>
   ): Promise<
     KucoinSDK.Http.Data<{
       currency: string
@@ -951,11 +1096,15 @@ class Kucoin {
       chain: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/withdrawals/quotas' },
-      params,
-      [{ key: 'currency' }, { key: 'chain' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/withdrawals/quotas' },
+        params,
+        [{ key: 'currency', required: true }, { key: 'chain' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -977,19 +1126,23 @@ class Kucoin {
       withdrawalId: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/withdrawals' },
-      params,
-      [
-        { key: 'currency', required: true },
-        { key: 'address', required: true },
-        { key: 'amount', required: true },
-        { key: 'memo' },
-        { key: 'isInner' },
-        { key: 'remark' },
-        { key: 'chain' },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/withdrawals' },
+        params,
+        [
+          { key: 'currency', required: true },
+          { key: 'address', required: true },
+          { key: 'amount', required: true },
+          { key: 'memo' },
+          { key: 'isInner' },
+          { key: 'remark' },
+          { key: 'chain' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -999,11 +1152,14 @@ class Kucoin {
   async cancelWithdrawal(
     params: KucoinSDK.Http.Params<{ withdrawalId: string }>
   ): Promise<KucoinSDK.Http.Data<{}>> {
-    return await this.makeRequest(
-      { type: 'private', method: 'DELETE', endpoint: `/withdrawals/${params.withdrawalId}` },
-      params,
-      [{ key: 'withdrawalId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'DELETE', endpoint: `/withdrawals/${params.withdrawalId}` },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1013,14 +1169,14 @@ class Kucoin {
   async placeANewOrder(
     params: KucoinSDK.Http.Params<{
       clientOId: string
-      side: string
+      side: 'buy' | 'sell'
       symbol: string
-      type?: string
+      type?: 'limit' | 'market'
       remark?: string
-      stop?: string
+      stop?: 'loss' | 'entry'
       stopPrice?: string
-      stp?: string
-      tradeType?: string
+      stp?: 'CN' | 'CO' | 'CB' | 'DC'
+      tradeType?: 'TRADE' | 'MARGIN_TRADE'
       price?: string
       size?: string
       timeInForce?: string
@@ -1036,30 +1192,34 @@ class Kucoin {
       orderId: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/orders' },
-      params,
-      [
-        { key: 'clientOid', required: true },
-        { key: 'side', required: true },
-        { key: 'symbol', required: true },
-        { key: 'size', required: !!params.price || (!params.price && !params.funds) },
-        { key: 'funds', required: !params.price && !params.size },
-        { key: 'type' },
-        { key: 'remark' },
-        { key: 'stop' },
-        { key: 'stopPrice' },
-        { key: 'stp' },
-        { key: 'tradeType' },
-        { key: 'price' },
-        { key: 'timeInForce' },
-        { key: 'cancelAfter' },
-        { key: 'postOnly' },
-        { key: 'hidden' },
-        { key: 'iceberg' },
-        { key: 'visibleSize' },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/orders' },
+        params,
+        [
+          { key: 'clientOid', required: true },
+          { key: 'side', required: true },
+          { key: 'symbol', required: true },
+          { key: 'size', required: !!params.price || (!params.price && !params.funds) },
+          { key: 'funds', required: !params.price && !params.size },
+          { key: 'type' },
+          { key: 'remark' },
+          { key: 'stop' },
+          { key: 'stopPrice' },
+          { key: 'stp' },
+          { key: 'tradeType' },
+          { key: 'price' },
+          { key: 'timeInForce' },
+          { key: 'cancelAfter' },
+          { key: 'postOnly' },
+          { key: 'hidden' },
+          { key: 'iceberg' },
+          { key: 'visibleSize' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1073,11 +1233,15 @@ class Kucoin {
       cancelledOrderIds: string[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'DELETE', endpoint: `/orders/${params.orderId}` },
-      params,
-      [{ key: 'orderId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'DELETE', endpoint: `/orders/${params.orderId}` },
+        params,
+        [{ key: 'orderId', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1085,17 +1249,24 @@ class Kucoin {
    * @description Request via this endpoint to cancel all open orders. The response is a list of ids of the canceled orders.
    */
   async cancelAllOrders(
-    params: KucoinSDK.Http.Params<{ symbol?: string; tradeType?: string }>
+    params: KucoinSDK.Http.Params<{
+      symbol?: string
+      tradeType?: 'TRADE' | 'MARGIN_TRADE' | string
+    }>
   ): Promise<
     KucoinSDK.Http.Data<{
       cancelledOrderIds: string[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'DELETE', endpoint: '/orders' },
-      params,
-      [{ key: 'symbol' }, { key: 'tradeType' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'DELETE', endpoint: '/orders' },
+        params,
+        [{ key: 'symbol' }, { key: 'tradeType' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1104,11 +1275,11 @@ class Kucoin {
    */
   async listOrders(
     params: KucoinSDK.Http.Params<{
-      status?: string
+      status?: 'active' | 'done'
       symbol?: string
-      side?: string
-      type?: string
-      tradeType?: string
+      side?: 'buy' | 'sell'
+      type?: 'limit' | 'market' | 'limit_stop' | 'market_stop'
+      tradeType: 'TRADE' | 'MARGIN_TRADE'
       startAt?: string
       endAt?: string
     }>
@@ -1152,15 +1323,23 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/orders' }, params, [
-      { key: 'status' },
-      { key: 'symbol' },
-      { key: 'side' },
-      { key: 'type' },
-      { key: 'tradeType' },
-      { key: 'startAt' },
-      { key: 'endAt' },
-    ])
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/orders' },
+        params,
+        [
+          { key: 'status' },
+          { key: 'symbol' },
+          { key: 'side' },
+          { key: 'type' },
+          { key: 'tradeType', required: true },
+          { key: 'startAt' },
+          { key: 'endAt' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1172,7 +1351,7 @@ class Kucoin {
       currentPage?: number
       pageSize?: number
       symbol?: string
-      side?: string
+      side?: 'buy' | 'sell'
       startAt?: string
       endAt?: string
     }>
@@ -1193,27 +1372,29 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/hist-orders' },
-      params,
-      [
-        { key: 'currentPage' },
-        { key: 'pageSize' },
-        { key: 'symbol' },
-        { key: 'side' },
-        { key: 'startAt' },
-        { key: 'endAt' },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/hist-orders' },
+        params,
+        [
+          { key: 'currentPage' },
+          { key: 'pageSize' },
+          { key: 'symbol' },
+          { key: 'side' },
+          { key: 'startAt' },
+          { key: 'endAt' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#recent-orders
    * @description Request via this endpoint to get 1000 orders in the last 24 hours. Items are paginated and sorted to show the latest first. See the Pagination section for retrieving additional entries after the first page.
    */
-  async recentOrders(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async recentOrders(): Promise<
     KucoinSDK.Http.Data<{
       currentPage: number
       pageSize: number
@@ -1253,7 +1434,14 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/limit/orders' }, {})
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/limit/orders' },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1296,11 +1484,14 @@ class Kucoin {
       tradeType: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: `/orders/${params.orderId}` },
-      params,
-      [{ key: 'orderId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: `/orders/${params.orderId}` },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1311,11 +1502,11 @@ class Kucoin {
     params: KucoinSDK.Http.Params<{
       orderId?: string
       symbol?: string
-      side?: string
-      type?: string
+      side?: 'buy' | 'sell'
+      type?: 'limit' | 'market' | 'limit_stop' | 'market_stop'
       startAt?: string
       endAt?: string
-      tradeType: string
+      tradeType: 'TRADE' | 'MARGIN_TRADE'
     }>
   ): Promise<
     KucoinSDK.Http.Data<{
@@ -1344,24 +1535,30 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/fills' }, params, [
-      { key: 'orderId' },
-      { key: 'symbol' },
-      { key: 'side' },
-      { key: 'type' },
-      { key: 'startAt' },
-      { key: 'endAt' },
-      { key: 'tradeType', required: true },
-    ])
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/fills' },
+        params,
+        [
+          { key: 'orderId' },
+          { key: 'symbol' },
+          { key: 'side' },
+          { key: 'type' },
+          { key: 'startAt' },
+          { key: 'endAt' },
+          { key: 'tradeType', required: true },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#recent-fills
    * @description Request via this endpoint to get a list of 1000 fills in the last 24 hours.
    */
-  async recentFills(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async recentFills(): Promise<
     KucoinSDK.Http.Data<{
       code: number
       data: {
@@ -1385,7 +1582,14 @@ class Kucoin {
       }[]
     }>
   > {
-    return await this.makeRequest({ type: 'private', method: 'GET', endpoint: '/limit/fills' }, {})
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/limit/fills' },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1402,20 +1606,21 @@ class Kucoin {
       value: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: `/mark-price/${params.symbol}/current` },
-      params,
-      [{ key: 'symbol', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: `/mark-price/${params.symbol}/current` },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-margin-configuration-info
    * @description Request via this endpoint to get the configure info of the margin.
    */
-  async getMarginConfigurationInfo(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async getMarginConfigurationInfo(): Promise<
     KucoinSDK.Http.Data<{
       currencyList: string[]
       warningDebtRatio: number
@@ -1423,19 +1628,21 @@ class Kucoin {
       maxLeverage: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/margin/config' },
-      {}
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/margin/config' },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#get-margin-account
    * @description Request via this endpoint to get the info of the margin account.
    */
-  async getMarginAccount(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async getMarginAccount(): Promise<
     KucoinSDK.Http.Data<{
       accounts: {
         availableBalance: number
@@ -1448,10 +1655,14 @@ class Kucoin {
       debtRatio: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/margin/account' },
-      {}
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/margin/account' },
+        {}
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1463,8 +1674,8 @@ class Kucoin {
       currency: string
       type: string
       size: number
-      maxRate: number
-      term: string
+      maxRate?: number
+      term?: string
     }>
   ): Promise<
     KucoinSDK.Http.Data<{
@@ -1472,17 +1683,21 @@ class Kucoin {
       currency: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/margin/borrow' },
-      params,
-      [
-        { key: 'currency', required: true },
-        { key: 'type', required: true },
-        { key: 'size', required: true },
-        { key: 'maxRate', required: true },
-        { key: 'term', required: true },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/margin/borrow' },
+        params,
+        [
+          { key: 'currency', required: true },
+          { key: 'type', required: true },
+          { key: 'size', required: true },
+          { key: 'maxRate' },
+          { key: 'term' },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1508,11 +1723,15 @@ class Kucoin {
       status: string
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/margin/borrow' },
-      params,
-      [{ key: 'orderId', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/margin/borrow' },
+        params,
+        [{ key: 'orderId', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1541,11 +1760,15 @@ class Kucoin {
       totalPage: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/margin/borrow/outstanding' },
-      params,
-      [{ key: 'currency' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/margin/borrow/outstanding' },
+        params,
+        [{ key: 'currency' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1572,11 +1795,15 @@ class Kucoin {
       totalPage: number
     }>
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/margin/borrow/repaid' },
-      params,
-      [{ key: 'currency' }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/margin/borrow/repaid' },
+        params,
+        [{ key: 'currency' }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1584,17 +1811,25 @@ class Kucoin {
    * @description One-click repayment
    */
   async oneClickRepayment(
-    params: KucoinSDK.Http.Params<{ currency: string; sequence: string; size: number }>
+    params: KucoinSDK.Http.Params<{
+      currency: string
+      sequence: 'RECENTLY_EXPIRE_FIRST' | 'HIGHEST_RATE_FIRST'
+      size: number
+    }>
   ): Promise<KucoinSDK.Http.Data<{}>> {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/margin/repay/all' },
-      params,
-      [
-        { key: 'currency', required: true },
-        { key: 'sequence', required: true },
-        { key: 'size', required: true },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/margin/repay/all' },
+        params,
+        [
+          { key: 'currency', required: true },
+          { key: 'sequence', required: true },
+          { key: 'size', required: true },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1604,15 +1839,19 @@ class Kucoin {
   async repayASingleOrder(
     params: KucoinSDK.Http.Params<{ currency: string; tradeId: string; size: number }>
   ): Promise<KucoinSDK.Http.Data<{}>> {
-    return await this.makeRequest(
-      { type: 'private', method: 'POST', endpoint: '/margin/repay/single' },
-      params,
-      [
-        { key: 'currency', required: true },
-        { key: 'tradeId', required: true },
-        { key: 'size', required: true },
-      ]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'POST', endpoint: '/margin/repay/single' },
+        params,
+        [
+          { key: 'currency', required: true },
+          { key: 'tradeId', required: true },
+          { key: 'size', required: true },
+        ]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
@@ -1633,27 +1872,33 @@ class Kucoin {
       }[]
     >
   > {
-    return await this.makeRequest(
-      { type: 'private', method: 'GET', endpoint: '/margin/trade/last' },
-      params,
-      [{ key: 'currency', required: true }]
-    )
+    try {
+      return await this.makeRequest(
+        { type: 'private', method: 'GET', endpoint: '/margin/trade/last' },
+        params,
+        [{ key: 'currency', required: true }]
+      )
+    } catch (e) {
+      throw e
+    }
   }
 
   /**
    * @docs https://docs.kucoin.com/#server-time
    * @description Get the server time.
    */
-  async serverTime(
-    params: KucoinSDK.Http.Params<{}> = {}
-  ): Promise<
+  async serverTime(): Promise<
     KucoinSDK.Http.Data<{
       code: number
       msg: string
       data: number
     }>
   > {
-    return await this.makeRequest({ method: 'GET', endpoint: '/timestamp' }, {})
+    try {
+      return await this.makeRequest({ method: 'GET', endpoint: '/timestamp' }, {})
+    } catch (e) {
+      throw e
+    }
   }
 }
 

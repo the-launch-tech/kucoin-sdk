@@ -152,7 +152,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     time: number
     ticker: {
@@ -210,7 +210,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     data: string[]
   }>
@@ -227,7 +227,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<
     {
       currency: string
@@ -301,7 +301,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(level: number, params: KucoinSDK.Http.Params<{ level: string; symbol: string }>) => Promise<
+(level: number, params: KucoinSDK.Http.Params<{ symbol: string }>) => Promise<
   KucoinSDK.Http.Data<{
     sequence: number
     time: number
@@ -389,7 +389,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
     symbol: string
     startAt?: string
     endAt?: string
-    type?:
+    type:
       | '1min'
       | '3min'
       | '5min'
@@ -407,6 +407,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ): Promise<KucoinSDK.Http.Data<number[][]>>
 ```
 
+### (Private) API Endpoint Methods
+
 #### `async getUserSubInfo`
 
 - Docs
@@ -417,7 +419,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<
     {
       userId: string
@@ -438,7 +440,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ currency?: string; type?: 'MAIN' | 'TRADE' | 'MARGIN' }>) => Promise<
+(params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' }>) => Promise<
   KucoinSDK.Http.Data<{
     id: string
   }>
@@ -499,7 +501,20 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ accountId: string; startAt?: string; endAt?: string }>) => Promise<
+(params: KucoinSDK.Http.Params<{
+  accountId: string
+  startAt?: string
+  endAt?: string
+  direction?: 'in' | 'out'
+  bizType?:
+    | 'DEPOSIT'
+    | 'WITHDRAW'
+    | 'TRANSFER'
+    | 'SUB_TRANSFER'
+    | 'TRADE_EXCHANGE'
+    | 'MARGIN_EXCHANGE'
+    | 'KUCOIN_BONUS'
+  }>) => Promise<
   KucoinSDK.Http.Data<{
     currentPage: number
     pageSize: number
@@ -606,7 +621,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<
     {
       subUserId: string
@@ -653,7 +668,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' }>) => Promise<
+(params: KucoinSDK.Http.Params<{ currency: string; type: 'MAIN' | 'TRADE' | 'MARGIN' | 'POOL' }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
     balance: number
@@ -680,7 +695,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
     currency: string
     amount: string | number
     direction: 'OUT' | 'IN'
-    accountType?: 'MAIN' | 'TRADE' | 'MARGIN'
+    accountType?: 'MAIN'
     subAccountType?: 'MAIN' | 'TRADE' | 'MARGIN'
     subUserId: string
   }>
@@ -705,8 +720,8 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   params: KucoinSDK.Http.Params<{
     clientOid: string
     currency: string
-    from: 'MAIN' | 'TRADE' | 'MARGIN'
-    to: 'MAIN' | 'TRADE' | 'MARGIN'
+    from: 'main' | 'trade' | 'margin' | 'pool'
+    to: 'main' | 'trade' | 'margin' | 'pool'
     amount: string | number
   }>
 ) => Promise<
@@ -885,7 +900,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
     currency?: string
     startAt?: string
     endAt?: string
-    status?: string
+    status?: 'PROCESSING' | 'SUCCESS' | 'FAILURE'
     currentPage?: number
     pageSize?: number
   }>
@@ -918,7 +933,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ currency?: string; chain?: string }>) => Promise<
+(params: KucoinSDK.Http.Params<{ currency: string; chain?: string }>) => Promise<
   KucoinSDK.Http.Data<{
     currency: string
     limitBTCAmount: number
@@ -989,14 +1004,14 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 (
   params: KucoinSDK.Http.Params<{
     clientOId: string
-    side: string
+    side: 'buy' | 'sell'
     symbol: string
-    type?: string
+    type?: 'limit' | 'market'
     remark?: string
-    stop?: string
+    stop?: 'loss' | 'entry'
     stopPrice?: string
-    stp?: string
-    tradeType?: string
+    stp?: 'CN' | 'CO' | 'CB' | 'DC'
+    tradeType?: 'TRADE' | 'MARGIN_TRADE'
     price?: string
     size?: string
     timeInForce?: string
@@ -1041,7 +1056,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{ symbol?: string; tradeType?: string }>) => Promise<
+(params: KucoinSDK.Http.Params<{ symbol?: string; tradeType?: 'TRADE' | 'MARGIN_TRADE' | string }>) => Promise<
   KucoinSDK.Http.Data<{
     cancelledOrderIds: string[]
   }>
@@ -1060,11 +1075,11 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 ```
 (
   params: KucoinSDK.Http.Params<{
-    status?: string
+    status?: 'active' | 'done'
     symbol?: string
-    side?: string
-    type?: string
-    tradeType?: string
+    side?: 'buy' | 'sell'
+    type?: 'limit' | 'market' | 'limit_stop' | 'market_stop'
+    tradeType: 'TRADE' | 'MARGIN_TRADE'
     startAt?: string
     endAt?: string
   }>
@@ -1125,7 +1140,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
     currentPage?: number
     pageSize?: number
     symbol?: string
-    side?: string
+    side?: 'buy' | 'sell'
     startAt?: string
     endAt?: string
   }>
@@ -1158,9 +1173,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(
-  params: KucoinSDK.Http.Params<{}> = {}
-) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     currentPage: number
     pageSize: number
@@ -1264,11 +1277,11 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
   params: KucoinSDK.Http.Params<{
     orderId?: string
     symbol?: string
-    side?: string
-    type?: string
+    side?: 'buy' | 'sell'
+    type?: 'limit' | 'market' | 'limit_stop' | 'market_stop'
     startAt?: string
     endAt?: string
-    tradeType: string
+    tradeType: 'TRADE' | 'MARGIN_TRADE'
   }>
 ) => Promise<
   KucoinSDK.Http.Data<{
@@ -1309,7 +1322,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     code: number
     data: {
@@ -1365,7 +1378,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     currencyList: string[]
     warningDebtRatio: number
@@ -1385,7 +1398,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     accounts: {
       availableBalance: number
@@ -1528,7 +1541,11 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 
 ```
 (
-  params: KucoinSDK.Http.Params<{ currency: string; sequence: string; size: number }>
+  params: KucoinSDK.Http.Params<{
+    currency: string
+    sequence: 'RECENTLY_EXPIRE_FIRST' | 'HIGHEST_RATE_FIRST'
+    size: number
+  }>
 ) => Promise<KucoinSDK.Http.Data<{}>>
 ```
 
@@ -1581,7 +1598,7 @@ Version 2.0.0 will be Typescript integrated, unit tested, and will contain copie
 - Types
 
 ```
-(params: KucoinSDK.Http.Params<{}>) => Promise<
+() => Promise<
   KucoinSDK.Http.Data<{
     code: number
     msg: string
