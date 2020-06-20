@@ -8,8 +8,8 @@ Version 3.x.x will contain a WebSocket implementation.
 
 ## 1.x.x - 2.x.x User Changes
 
-1. `PASSPHRASE?: string` can be added as a paramter to the class instantiation. It is you API creation passphrase, and is required for signing authenticated requests for private endpoints.
-2. `isTest?: boolean` can be added to indicate sandbox usage.
+1. `PASSPHRASE?: string` can be added as a parameter to the class instantiation. It is you API creation passphrase, and is required for signing authenticated requests for private endpoints.
+2. `isTest?: boolean` can be addedas a parameter to the class instantiation to indicate sandbox usage.
 
 ## 2.x.x Installation
 
