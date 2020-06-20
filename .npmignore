@@ -1,0 +1,9 @@
+/__tests__
+/node_modules
+/.git
+/src
+.gitignore
+CONCERNS.md
+jest.config.js
+test.js
+tsconfig.json

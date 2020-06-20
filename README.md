@@ -1780,6 +1780,9 @@ KucoinInstance.removeRequestInterceptor(requestInterceptor)
 - `1.1.0` Added untested routes for Deposits, Withdrawals, Margin Trading, Account Info, Orders, and Fills
 - `2.0.0` Integrate Typescript
 - `2.0.0` Integrate Docstrings for IDE comment hinting
+- `2.0.0` Added Param Checker for all endpoints, emits `console.warning` if unused and `throw e` if missing required.
+- `2.0.0` Added Axios callbacks for `interceptors` on `request` and `response`
+- `2.0.0` Added non-breaking `PASSPHRASE?: string` and `isTest?: boolean` as paramters for `KucoinInstance`
 
 ## Credits
 

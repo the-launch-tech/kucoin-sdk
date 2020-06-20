@@ -1,6 +1,6 @@
 {
   "name": "kucoin-sdk",
-  "version": "1.0.2",
+  "version": "2.0.1",
   "description": "Kucoin Exchange NodeJS SDK",
   "main": "index.js",
   "scripts": {
